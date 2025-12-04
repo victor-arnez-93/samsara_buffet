@@ -42,6 +42,7 @@ const slides = document.querySelectorAll('.galeria-slide');
 const prevBtn = document.querySelector('.slider-prev');
 const nextBtn = document.querySelector('.slider-next');
 let currentSlide = 0;
+let autoplayInterval;
 
 function showSlide(i) {
   slides.forEach((slide, idx) => {
@@ -49,16 +50,38 @@ function showSlide(i) {
   });
 }
 
-if (prevBtn && nextBtn && slides.length) {
-  prevBtn.addEventListener('click', () => {
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    showSlide(currentSlide);
-  });
-
-  nextBtn.addEventListener('click', () => {
+// Autoplay - troca a cada 4 segundos
+function startAutoplay() {
+  autoplayInterval = setInterval(() => {
     currentSlide = (currentSlide + 1) % slides.length;
     showSlide(currentSlide);
-  });
+  }, 4000);
+}
+
+function stopAutoplay() {
+  clearInterval(autoplayInterval);
+}
+
+if (slides.length > 0) {
+  showSlide(0);
+  startAutoplay();
+
+  // Parar autoplay quando usuário clicar nas setas
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      stopAutoplay();
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+      startAutoplay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      stopAutoplay();
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+      startAutoplay();
+    });
+  }
 }
 
 // Formulário envia via WhatsApp
